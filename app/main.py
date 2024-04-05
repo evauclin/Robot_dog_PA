@@ -109,7 +109,6 @@ def allowed_file(filename):
 
 @app.post('/upload')
 async def upload_image(image: UploadFile = File(...)):
-    print("hello")
 
     if not image:
         raise HTTPException(status_code=400, detail="No image uploaded")
@@ -119,12 +118,10 @@ async def upload_image(image: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Only PNG images allowed")
 
     try:
-        print("hello")
         image.filename = f"{uuid.uuid4()}.jpeg"
         content = await image.read()
         with open(UPLOAD_FOLDER / image.filename, "wb") as f:
             f.write(content)
-            print("hello")
             image_convert = cv.imread(f"{UPLOAD_FOLDER}/{image.filename}")
             data = object_detector(image_convert)
             if data[0][0] == 'person':
