@@ -1,4 +1,5 @@
 import fileinput
+from Face_rec import images_process, easy_face_reco
 
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from pathlib import Path
@@ -96,7 +97,8 @@ UPLOAD_FOLDER.mkdir(exist_ok=True)
 # Allowed file extensions
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png'}
 
-
+args = "/images"
+known_face_names,known_face_encodings = images_process(args)
 
 @app.get('/')
 async def home():
@@ -126,7 +128,8 @@ async def upload_image(image: UploadFile = File(...)):
             data = object_detector(image_convert)
             if data[0][0] == 'person':
                 distance = distance_finder(focal_person, PERSON_WIDTH, data[0][1])
-                if distance > 1:
+                name = easy_face_reco(image_convert, known_face_encodings, known_face_names)
+                if distance > 1 and (name != None or name != "Unknown"):
                     return {"message": "Go"}
                 else:
                     return {"message": "Stop"}
