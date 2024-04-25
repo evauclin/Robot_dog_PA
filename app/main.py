@@ -97,8 +97,7 @@ UPLOAD_FOLDER.mkdir(exist_ok=True)
 # Allowed file extensions
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png'}
 
-args = "/images"
-known_face_names,known_face_encodings = images_process(args)
+known_face_names,known_face_encodings = images_process("images")
 
 @app.get('/')
 async def home():

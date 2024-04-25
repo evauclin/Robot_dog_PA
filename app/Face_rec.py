@@ -104,10 +104,11 @@ def capture(x, y):
     return namme
 
 
-def images_process(path_folder ):
+def images_process(path=Path('images')):
 
     print('[INFO] Importing faces...')
-    face_to_encode_path = Path(path_folder)
+    face_to_encode_path = Path(path)
+    print(face_to_encode_path)
     files = [file_ for file_ in face_to_encode_path.rglob('*.png')]
 
     for file_ in face_to_encode_path.rglob('*.png'):
@@ -133,9 +134,7 @@ def images_process(path_folder ):
 
     return known_face_names,known_face_encodings
 
-
-args = "/images"
-known_face_names,known_face_encodings = images_process(args)
+known_face_names,known_face_encodings = images_process()
 print('[INFO] Faces well imported')
 print('[INFO] Starting Webcam...')
 print('[INFO] Webcam well started')
