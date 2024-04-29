@@ -42,7 +42,6 @@ known_face_names, known_face_encodings = images_process("images")
 log.info("Images source loaded successfully")
 
 
-
 @app.get("/")
 async def home():
     return {"message": "Welcome to the home page"}
