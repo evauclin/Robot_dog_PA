@@ -42,6 +42,7 @@ known_face_names, known_face_encodings = images_process("images")
 log.info("Images source loaded successfully")
 
 
+
 @app.get("/")
 async def home():
     return {"message": "Welcome to the home page"}
@@ -79,6 +80,7 @@ async def upload_image(image: UploadFile = File(...)):
                         "distance": f"{distance} inch",
                         "message": "Go",
                     }
+
                 else:
                     log.info("No person detected or person is too close")
                     return {"message": "Stop"}

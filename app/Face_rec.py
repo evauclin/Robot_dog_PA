@@ -1,4 +1,5 @@
 import cv2
+import imutils, time, cv2, sys
 import dlib
 import PIL.Image
 import numpy as np
@@ -23,6 +24,22 @@ face_encoder = dlib.face_recognition_model_v1(
 face_detector = dlib.get_frontal_face_detector()
 log.info("[INFO] Pretrained model imported successfully..")
 
+import argparse
+from pathlib import Path
+import os
+import ntpath
+import matplotlib.pyplot as plt
+
+import smtplib, os
+
+print('[INFO] Starting System...')
+print('[INFO] Importing pretrained model..')
+pose_predictor_68_point = dlib.shape_predictor("./Predictor/shape_predictor_68_face_landmarks.dat")
+pose_predictor_5_point = dlib.shape_predictor("./Predictor/shape_predictor_5_face_landmarks.dat")
+face_encoder = dlib.face_recognition_model_v1("./Predictor/dlib_face_recognition_resnet_model_v1.dat")
+face_detector = dlib.get_frontal_face_detector()
+print('[INFO] Importing pretrained model..')
+
 
 def transform(image, face_locations):
     coord_faces = []
@@ -34,6 +51,7 @@ def transform(image, face_locations):
             min(rect[2], image.shape[0]),
             max(rect[3], 0),
         )
+        coord_face = max(rect[0], 0), min(rect[1], image.shape[1]), min(rect[2], image.shape[0]), max(rect[3], 0)
         coord_faces.append(coord_face)
     return coord_faces
 
@@ -71,6 +89,7 @@ def easy_face_reco(frame, known_face_encodings, known_face_names):
         and face_locations_list is not None
         and landmarks_list is not None
     ):
+
         face_names = []
         for face_encoding in face_encodings_list:
             if len(face_encoding) == 0:
@@ -108,6 +127,7 @@ def easy_face_reco(frame, known_face_encodings, known_face_names):
 
         for shape in landmarks_list:
             for x, y in shape:
+
                 cv2.circle(frame, (x, y), 1, (255, 0, 255), -1)
     else:
         name = None
@@ -119,6 +139,7 @@ def easy_face_reco(frame, known_face_encodings, known_face_names):
 def capture(x, y):
     img1 = cv2.cvtColor(x, y)
     filename = "./detection.jpg"
+
 
     cv2.imwrite(filename, img1)
     namme = print(filename)
@@ -134,6 +155,7 @@ def images_process(path=Path("images")):
         raise ValueError(
             "No faces detect in the directory: {}".format(face_to_encode_path)
         )
+
     known_face_names = [os.path.splitext(ntpath.basename(file_))[0] for file_ in files]
 
     known_face_encodings = []
@@ -152,3 +174,4 @@ def images_process(path=Path("images")):
             print(f"Face encoding not found for {file_}")
 
     return known_face_names, known_face_encodings
+
