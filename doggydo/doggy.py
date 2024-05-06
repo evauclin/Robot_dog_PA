@@ -15,10 +15,7 @@ from .controller.Buzzer import Buzzer
 
 class DoggyOrder(IntEnum):
     NONE = -1
-    STAND = 1
-    SIT = 2
-    LIE = 3
-
+    FORWARD = 1
 
 class CV2Camera(object):
     def __init__(self):
@@ -109,7 +106,7 @@ class Doggy(object):
         self.video = None
         self._machine = None
         self.in_stand = False
-        self.last_order = DoggyOrder.LIE
+        self.last_order = DoggyOrder.SIT
 
     @property
     def machine(self):
@@ -149,28 +146,8 @@ class Doggy(object):
             print("NO DOGGY ON PC")
             time.sleep(3)
         elif self.last_order != order:
-            if order == DoggyOrder.STAND:
-                print("STAND")
-                # self.animator.controller.lay2(enter=True)
-                # self.in_stand = True
-                self.buzzer.run('1')
-                time.sleep(0.2)
-                self.buzzer.run('0')
-                time.sleep(0.1)
-                self.buzzer.run('1')
-                time.sleep(0.2)
-                self.buzzer.run('0')
-                time.sleep(0.4)
-                self.buzzer.run('1')
-                time.sleep(0.3)
-                self.buzzer.run('0')
-            elif order == DoggyOrder.SIT:
-                print("SIT")
-                self.animator.interpolate_to(xyz=DOGGY_SIT_POSITION, steps=30, pause=0.02)
-                self.last_order = order
-            elif order == DoggyOrder.LIE:
-                print("LIE")
-                self.animator.interpolate_to(xyz=DOGGY_IDLE_POSITION, steps=30, pause=0.02)
+            if order == DoggyOrder.FORWARD:
+                self.controller.forward()
                 self.last_order = order
             elif order == DoggyOrder.NONE:
                 print("NONE")

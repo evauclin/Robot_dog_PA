@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 import io
 import time
-from tflite_runtime.interpreter import Interpreter
 
 from typing import Any, List, Optional
 from doggydo import doggy
 from doggydo.doggy import DoggyOrder
 from doggydo import detectorizer_for_tflite
+import requests
 
 
 def clamp_detections(detections: List[DoggyOrder], limit: int = 5) -> List[DoggyOrder]:
@@ -28,11 +28,9 @@ def get_new_detection_tflite(interpreter, frame, threshold):
     order = detectorizer_for_tflite.detect_objects(interpreter, frame, threshold)
     if order is not None:
         if order == 0:
-            return DoggyOrder.LIE
+            return DoggyOrder.NONE
         elif order == 1:
-            return DoggyOrder.STAND
-        elif order == 2:
-            return DoggyOrder.SIT
+            return DoggyOrder.FORWARD
         else:
             raise RuntimeError('Error with orders')
     return DoggyOrder.NONE
@@ -41,11 +39,7 @@ def get_new_detection_tflite(interpreter, frame, threshold):
 def main():
     # Init vars and load models here
     last_detections = []
-    # detection_model = detectorizer_without_tflite.setup_and_load_model()
 
-    detection_model = Interpreter("detectv3.tflite")
-    detection_model.allocate_tensors()
-    # _, input_height, input_width, _ = detection_model.get_input_details()[0]['shape']
 
     if not doggy.start():
         raise RuntimeError("Doggy did not start!")
@@ -53,6 +47,8 @@ def main():
         print("Doggy started.")
 
     new_detection = DoggyOrder.NONE
+    url_vm = "http://34.245.54.151:80/upload"
+    headers = {"accept": "application/json"}
 
     # Main event loop
     with doggy.video.camera as camera:
@@ -61,7 +57,8 @@ def main():
         for _ in camera.capture_continuous(stream, 'jpeg', use_video_port = True):
             frame = doggy.get_camera_frame(stream)
             if frame is not None:
-                new_detection = get_new_detection_tflite(detection_model, frame, 0.7)
+                files = {'image':frame}
+                response = requests.post(url_vm, files=files, headers=headers)
                 last_detections.append(new_detection)
                 last_detections = clamp_detections(last_detections, limit=2)
                 current_order = get_order_given(last_detections)
