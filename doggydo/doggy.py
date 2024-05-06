@@ -106,7 +106,7 @@ class Doggy(object):
         self.video = None
         self._machine = None
         self.in_stand = False
-        self.last_order = DoggyOrder.SIT
+        self.last_order = -1
 
     @property
     def machine(self):
@@ -148,7 +148,6 @@ class Doggy(object):
         elif self.last_order != order:
             if order == DoggyOrder.FORWARD:
                 self.controller.forward()
-                self.last_order = order
             elif order == DoggyOrder.NONE:
                 print("NONE")
                 self.last_order = order

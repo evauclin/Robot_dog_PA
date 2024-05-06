@@ -11,3 +11,14 @@ def test_app():
     headers = {"accept": "application/json"}
     response = requests.post(url, files=files, headers=headers)
     assert response.status_code == 200
+url = "http://0.0.0.0:80/upload"
+url_vm = "http://34.245.54.151:80/upload"
+
+file_path = "Capture d'écran 25 avril 2024.jpg"
+files = {"image": open(file_path, "rb")}
+headers = {"accept": "application/json"}
+response = requests.post(url, files=files, headers=headers)
+name = response.json()["name"]
+distance = response.json()["distance"]
+message = response.json()["message"]
+print(name, distance, message)

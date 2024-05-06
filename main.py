@@ -59,9 +59,9 @@ def main():
             if frame is not None:
                 files = {'image':frame}
                 response = requests.post(url_vm, files=files, headers=headers)
-                last_detections.append(new_detection)
-                last_detections = clamp_detections(last_detections, limit=2)
-                current_order = get_order_given(last_detections)
+                name = response.json()["name"]
+                distance = response.json()["distance"]
+                current_order = 1 if response.json()["message"] == "Go" else -1
                 print(new_detection)
 
                 if current_order != DoggyOrder.NONE and doggy.ready():

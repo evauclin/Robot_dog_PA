@@ -72,17 +72,21 @@ async def upload_image(image: UploadFile = File(...)):
                 name = easy_face_reco(
                     image_convert, known_face_encodings, known_face_names
                 )
-                if distance > 1 and (name != None or name != "Unknown"):
+                if distance > 70 and (name != None or name != "Unknown"):
                     log.info(f"Person detected at {distance} cm with name {name}")
                     return {
                         "name": name,
-                        "distance": f"{distance} inch",
+                        "distance": distance,
                         "message": "Go",
                     }
 
                 else:
                     log.info("No person detected or person is too close")
-                    return {"message": "Stop"}
+                    return {
+                        "name": None,
+                        "distance": None,
+                        "message": None,
+                    }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to upload image: {str(e)}")
