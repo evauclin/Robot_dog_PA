@@ -47,7 +47,7 @@ def main():
         print("Doggy started.")
 
     new_detection = DoggyOrder.NONE
-    url_vm = "http://172.31.4.236:80/upload"
+    url_vm = "http://18.201.12.192:80/upload"
     headers = {"accept": "application/json"}
 
     # Main event loop
