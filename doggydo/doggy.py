@@ -106,7 +106,6 @@ class Doggy(object):
         self.video = None
         self._machine = None
         self.in_stand = False
-        self.last_order = -1
 
     @property
     def machine(self):
@@ -145,14 +144,14 @@ class Doggy(object):
         if not self.is_raspberrypi:
             print("NO DOGGY ON PC")
             time.sleep(3)
-        elif self.last_order != order:
-            if order == DoggyOrder.FORWARD:
+        elif order == DoggyOrder.FORWARD:
+            start_time = time.time()
+            while time.time() - start_time < 5:
                 self.controller.forward()
-            elif order == DoggyOrder.NONE:
-                print("NONE")
-                self.last_order = order
-            else:
-                raise RuntimeError(f"Unknown order: {order}")
+        elif order == DoggyOrder.NONE:
+            print("NONE")
+        else:
+            raise RuntimeError(f"Unknown order: {order}")
 
         self._ready = True
         return True

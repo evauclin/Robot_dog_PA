@@ -47,7 +47,7 @@ def main():
         print("Doggy started.")
 
     new_detection = DoggyOrder.NONE
-    url_vm = "http://34.245.54.151:80/upload"
+    url_vm = "http://172.31.4.236:80/upload"
     headers = {"accept": "application/json"}
 
     # Main event loop
@@ -63,6 +63,7 @@ def main():
                 distance = response.json()["distance"]
                 current_order = 1 if response.json()["message"] == "Go" else -1
                 print(new_detection)
+                print(current_order)
 
                 if current_order != DoggyOrder.NONE and doggy.ready():
                     last_detections = []

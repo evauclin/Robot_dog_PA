@@ -452,13 +452,8 @@ class Control:
         return (AB)
 
 if __name__=='__main__':
-    control=Control()
-    while True:
-        print("enter")
-        control.stop()
-        print("stop")
-        time.sleep(2)
-        control.forWard()
+    pass
+
 
 
 
