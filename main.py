@@ -5,7 +5,6 @@ import time
 from typing import Any, List, Optional
 from doggydo import doggy
 from doggydo.doggy import DoggyOrder
-from doggydo import detectorizer_for_tflite
 import requests
 
 
