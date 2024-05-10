@@ -46,6 +46,7 @@ def main():
         for _ in camera.capture_file(stream, 'jpeg'):
             frame = doggy.get_camera_frame(stream)
             if frame is not None:
+                print(frame)
                 files = {'image':frame}
                 response = requests.post(url_vm, files=files, headers=headers)
                 name = response.json()["name"]
