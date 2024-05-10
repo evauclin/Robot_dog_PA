@@ -66,19 +66,20 @@ async def upload_image(image: UploadFile = File(...)):
         with open(UPLOAD_FOLDER / image.filename, "wb") as f:
             f.write(content)
             image_convert = cv.imread(f"{UPLOAD_FOLDER}/{image.filename}")
-            data = object_detector(image_convert)
-            if data[0][0] == "person":
-                distance = distance_finder(focal_person, PERSON_WIDTH, data[0][1])
-                name = easy_face_reco(
-                    image_convert, known_face_encodings, known_face_names
-                )
-                if distance > 400 and (name != None or name != "Unknown"):
-                    log.info(f"Person detected at {distance} cm with name {name}")
-                    return {
-                        "name": name,
-                        "distance": distance,
-                        "message": "Go",
-                    }
+            try:
+                data = object_detector(image_convert)
+                if data[0][0] == "person":
+                    distance = distance_finder(focal_person, PERSON_WIDTH, data[0][1])
+                    name = easy_face_reco(
+                        image_convert, known_face_encodings, known_face_names
+                    )
+                    if distance > 400 and (name != None or name != "Unknown"):
+                        log.info(f"Person detected at {distance} cm with name {name}")
+                        return {
+                            "name": name,
+                            "distance": distance,
+                            "message": "Go",
+                        }
 
                 else:
                     log.info("No person detected or person is too close")
@@ -87,6 +88,8 @@ async def upload_image(image: UploadFile = File(...)):
                         "distance": None,
                         "message": None,
                     }
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Failed to process image: {str(e)}")
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to upload image: {str(e)}")
