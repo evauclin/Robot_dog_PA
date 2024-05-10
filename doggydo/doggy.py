@@ -11,14 +11,12 @@ from typing import List
 from .controller.Action import Action
 from .controller.Led import Led
 from .controller.Buzzer import Buzzer
+from .controller.Control import Control
 
 
 class DoggyOrder(IntEnum):
     NONE = -1
-    STAND = 1
-    SIT = 2
-    LIE = 3
-
+    FORWARD = 1
 
 class CV2Camera(object):
     def __init__(self):
@@ -39,8 +37,8 @@ class CV2Camera(object):
 
 class PiCamera(object):
     def __init__(self):
-        import picamera
-        self.camera = picamera.PiCamera()
+        from picamera2 import Picamera2
+        self.camera = Picamera2()
 
     def setup(self):
         self.camera.resolution = (400,300)       # pi camera resolution
@@ -109,7 +107,6 @@ class Doggy(object):
         self.video = None
         self._machine = None
         self.in_stand = False
-        self.last_order = DoggyOrder.LIE
 
     @property
     def machine(self):
@@ -136,6 +133,7 @@ class Doggy(object):
 
     def do(self, order: DoggyOrder) -> bool:
         # TODO: this must be multithreaded?
+        control = Control()
         if not self.ready():
             return False
 
@@ -148,35 +146,15 @@ class Doggy(object):
         if not self.is_raspberrypi:
             print("NO DOGGY ON PC")
             time.sleep(3)
-        elif self.last_order != order:
-            if order == DoggyOrder.STAND:
-                print("STAND")
-                # self.animator.controller.lay2(enter=True)
-                # self.in_stand = True
-                self.buzzer.run('1')
-                time.sleep(0.2)
-                self.buzzer.run('0')
-                time.sleep(0.1)
-                self.buzzer.run('1')
-                time.sleep(0.2)
-                self.buzzer.run('0')
-                time.sleep(0.4)
-                self.buzzer.run('1')
-                time.sleep(0.3)
-                self.buzzer.run('0')
-            elif order == DoggyOrder.SIT:
-                print("SIT")
-                self.animator.interpolate_to(xyz=DOGGY_SIT_POSITION, steps=30, pause=0.02)
-                self.last_order = order
-            elif order == DoggyOrder.LIE:
-                print("LIE")
-                self.animator.interpolate_to(xyz=DOGGY_IDLE_POSITION, steps=30, pause=0.02)
-                self.last_order = order
-            elif order == DoggyOrder.NONE:
-                print("NONE")
-                self.last_order = order
-            else:
-                raise RuntimeError(f"Unknown order: {order}")
+        elif order == DoggyOrder.FORWARD:
+            for _ in range(0, 5):
+                control.forWard()
+                print("FORWARD")
+                time.sleep(0.5)
+        elif order == DoggyOrder.NONE:
+            print("NONE")
+        else:
+            raise RuntimeError(f"Unknown order: {order}")
 
         self._ready = True
         return True

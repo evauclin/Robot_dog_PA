@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 import io
 import time
-from tflite_runtime.interpreter import Interpreter
 
 from typing import Any, List, Optional
 from doggydo import doggy
 from doggydo.doggy import DoggyOrder
-from doggydo import detectorizer_for_tflite
+import requests
+import cv2
 
 
 def clamp_detections(detections: List[DoggyOrder], limit: int = 5) -> List[DoggyOrder]:
@@ -24,28 +24,12 @@ def get_order_given(last_detections: List[DoggyOrder]) -> DoggyOrder:
     return DoggyOrder.NONE
 
 
-def get_new_detection_tflite(interpreter, frame, threshold):
-    order = detectorizer_for_tflite.detect_objects(interpreter, frame, threshold)
-    if order is not None:
-        if order == 0:
-            return DoggyOrder.LIE
-        elif order == 1:
-            return DoggyOrder.STAND
-        elif order == 2:
-            return DoggyOrder.SIT
-        else:
-            raise RuntimeError('Error with orders')
-    return DoggyOrder.NONE
 
 
 def main():
     # Init vars and load models here
     last_detections = []
-    # detection_model = detectorizer_without_tflite.setup_and_load_model()
 
-    detection_model = Interpreter("detectv3.tflite")
-    detection_model.allocate_tensors()
-    # _, input_height, input_width, _ = detection_model.get_input_details()[0]['shape']
 
     if not doggy.start():
         raise RuntimeError("Doggy did not start!")
@@ -53,19 +37,27 @@ def main():
         print("Doggy started.")
 
     new_detection = DoggyOrder.NONE
+    url_vm = "http://34.240.56.31:80/upload"
+    headers = {"accept": "application/json"}
 
     # Main event loop
     with doggy.video.camera as camera:
         doggy.video.setup()
         stream = io.BytesIO()
-        for _ in camera.capture_continuous(stream, 'jpeg', use_video_port = True):
+        camera.start()
+        for _ in range(1000):
+            camera.capture_file(stream, format='jpeg')
             frame = doggy.get_camera_frame(stream)
             if frame is not None:
-                new_detection = get_new_detection_tflite(detection_model, frame, 0.7)
-                last_detections.append(new_detection)
-                last_detections = clamp_detections(last_detections, limit=2)
-                current_order = get_order_given(last_detections)
+                bgr_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+                cv2.imwrite("frame.jpg", bgr_frame)
+                files = {"image": open("frame.jpg", "rb")}
+                response = requests.post(url_vm, files=files, headers=headers, timeout=5)
+                name = response.json()["name"]
+                distance = response.json()["distance"]
+                current_order = 1 if response.json()["message"] == "Go" else -1
                 print(new_detection)
+                print(current_order)
 
                 if current_order != DoggyOrder.NONE and doggy.ready():
                     last_detections = []
