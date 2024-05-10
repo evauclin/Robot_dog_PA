@@ -44,6 +44,7 @@ def main():
         print("Camera started.")
         doggy.video.setup()
         stream = io.BytesIO()
+        camera.start()
         print(f"Stream started. {stream}")
         for _ in camera.capture_file(stream, 'jpeg'):
             print(f"Stream : {_}")
