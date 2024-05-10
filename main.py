@@ -59,7 +59,7 @@ def main():
                 print(new_detection)
                 print(current_order)
 
-                if current_order != DoggyOrder.NONE and doggy.ready():
+                if current_order != -1 and doggy.ready():
                     last_detections = []
                     doggy.do(current_order)
             else:
