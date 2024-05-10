@@ -41,6 +41,7 @@ def main():
 
     # Main event loop
     with doggy.video.camera as camera:
+        print("Camera started.")
         doggy.video.setup()
         stream = io.BytesIO()
         for _ in camera.capture_file(stream, 'jpeg'):
