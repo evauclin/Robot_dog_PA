@@ -22,7 +22,7 @@ class Control:
         self.move_count = 0
         self.move_timeout = 0
         self.order = ['','','','','']
-        self.point = [[-2, 95, 2], [13, 82, 13], [7, 97, -10], [-5, 98, -25]]
+        self.point = [[0, 99, 10], [0, 99, 10], [0, 99, -10], [0, 99, -10]]
         self.calibration_point = self.readFromTxt('point')
         self.angle = [[90,0,0],[90,0,0],[90,0,0],[90,0,0]]
         self.calibration_angle=[[0,0,0],[0,0,0],[0,0,0],[0,0,0]]

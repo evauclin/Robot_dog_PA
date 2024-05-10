@@ -45,12 +45,12 @@ def main():
         doggy.video.setup()
         stream = io.BytesIO()
         camera.start()
-        for _ in camera.capture_file(stream, format='jpeg'):
+        for _ in range(1000):
+            camera.capture_file(stream, format='jpeg')
             frame = doggy.get_camera_frame(stream)
             if frame is not None:
                 bgr_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
                 cv2.imwrite("frame.jpg", bgr_frame)
-                #files = {'image':frame}
                 files = {"image": open("frame.jpg", "rb")}
                 response = requests.post(url_vm, files=files, headers=headers, timeout=5)
                 name = response.json()["name"]
