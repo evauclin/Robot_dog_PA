@@ -73,9 +73,13 @@ async def upload_image(image: UploadFile = File(...)):
                         image_convert, known_face_encodings, known_face_names
                     )
                     if name and name != "Unknown":
-                        distance = distance_finder(focal_person, PERSON_WIDTH, data[0][1])
+                        distance = distance_finder(
+                            focal_person, PERSON_WIDTH, data[0][1]
+                        )
                         if distance > 400:
-                            log.info(f"Person detected at {distance} cm with name {name}")
+                            log.info(
+                                f"Person detected at {distance} cm with name {name}"
+                            )
                             return {
                                 "name": name,
                                 "distance": distance,
@@ -103,7 +107,9 @@ async def upload_image(image: UploadFile = File(...)):
                         "message": "No Go",
                     }
             except Exception as e:
-                raise HTTPException(status_code=500, detail=f"Failed to process image: {str(e)}")
+                raise HTTPException(
+                    status_code=500, detail=f"Failed to process image: {str(e)}"
+                )
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to upload image: {str(e)}")

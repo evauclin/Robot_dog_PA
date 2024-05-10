@@ -11,6 +11,8 @@ def test_app():
     headers = {"accept": "application/json"}
     response = requests.post(url, files=files, headers=headers)
     assert response.status_code == 200
+
+
 url = "http://0.0.0.0:80/upload"
 url_vm = "http://18.201.12.192:80/upload"
 
