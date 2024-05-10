@@ -44,8 +44,9 @@ def main():
     with doggy.video.camera as camera:
         doggy.video.setup()
         stream = io.BytesIO()
-        camera.start()
+
         while True:
+            camera.start()
             for _ in camera.capture_file(stream, format='jpeg'):
                 frame = doggy.get_camera_frame(stream)
                 if frame is not None:
