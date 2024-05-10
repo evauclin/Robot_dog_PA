@@ -57,7 +57,6 @@ async def upload_image(image: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="No image uploaded")
 
     if not allowed_file(image.filename):
-        print(image.filename)
         raise HTTPException(status_code=400, detail="Only PNG images allowed")
 
     try:
@@ -66,27 +65,42 @@ async def upload_image(image: UploadFile = File(...)):
         with open(UPLOAD_FOLDER / image.filename, "wb") as f:
             f.write(content)
             image_convert = cv.imread(f"{UPLOAD_FOLDER}/{image.filename}")
+
             try:
                 data = object_detector(image_convert)
-                if data[0][0] == "person":
-                    distance = distance_finder(focal_person, PERSON_WIDTH, data[0][1])
+                if data and data[0][0] == "person":
                     name = easy_face_reco(
                         image_convert, known_face_encodings, known_face_names
                     )
-                    if distance > 400 and (name != None or name != "Unknown"):
-                        log.info(f"Person detected at {distance} cm with name {name}")
+                    if name and name != "Unknown":
+                        distance = distance_finder(focal_person, PERSON_WIDTH, data[0][1])
+                        if distance < 400:
+                            log.info(f"Person detected at {distance} cm with name {name}")
+                            return {
+                                "name": name,
+                                "distance": distance,
+                                "message": "Go",
+                            }
+                        else:
+                            log.info("Person detected but distance exceeds 400 cm")
+                            return {
+                                "name": name,
+                                "distance": distance,
+                                "message": "No Go",
+                            }
+                    else:
+                        log.info("Person detected but name not recognized")
                         return {
-                            "name": name,
-                            "distance": distance,
-                            "message": "Go",
+                            "name": None,
+                            "distance": None,
+                            "message": "No Go",
                         }
-
                 else:
-                    log.info("No person detected or person is too close")
+                    log.info("No person detected")
                     return {
                         "name": None,
                         "distance": None,
-                        "message": None,
+                        "message": "No Go",
                     }
             except Exception as e:
                 raise HTTPException(status_code=500, detail=f"Failed to process image: {str(e)}")
