@@ -43,7 +43,7 @@ def main():
     with doggy.video.camera as camera:
         doggy.video.setup()
         stream = io.BytesIO()
-        for _ in camera.capture_continuous(stream, 'jpeg', use_video_port = True):
+        for _ in camera.capture(stream, 'jpeg', use_video_port = True):
             frame = doggy.get_camera_frame(stream)
             if frame is not None:
                 files = {'image':frame}
