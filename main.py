@@ -6,6 +6,7 @@ from typing import Any, List, Optional
 from doggydo import doggy
 from doggydo.doggy import DoggyOrder
 import requests
+import cv2
 
 
 def clamp_detections(detections: List[DoggyOrder], limit: int = 5) -> List[DoggyOrder]:
@@ -47,9 +48,7 @@ def main():
         for _ in camera.capture_file(stream, format='jpeg'):
             frame = doggy.get_camera_frame(stream)
             if frame is not None:
-                with open("image.jpg", "wb") as f:
-                    print("Saving image")
-                    f.write(frame)
+                cv2.imwrite("frame.jpg", frame)
                 files = {'image':frame}
                 response = requests.post(url_vm, files=files, headers=headers, timeout=5)
                 name = response.json()["name"]
