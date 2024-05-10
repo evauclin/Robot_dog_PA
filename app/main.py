@@ -72,7 +72,7 @@ async def upload_image(image: UploadFile = File(...)):
                 name = easy_face_reco(
                     image_convert, known_face_encodings, known_face_names
                 )
-                if distance > 70 and (name != None or name != "Unknown"):
+                if distance > 400 and (name != None or name != "Unknown"):
                     log.info(f"Person detected at {distance} cm with name {name}")
                     return {
                         "name": name,
