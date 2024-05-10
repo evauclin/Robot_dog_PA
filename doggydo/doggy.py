@@ -133,6 +133,7 @@ class Doggy(object):
 
     def do(self, order: DoggyOrder) -> bool:
         # TODO: this must be multithreaded?
+        control = Control()
         if not self.ready():
             return False
 
@@ -147,7 +148,7 @@ class Doggy(object):
             time.sleep(3)
         elif order == DoggyOrder.FORWARD:
             for _ in range(0, 5):
-                Control().forWard()
+                control.forWard()
                 print("FORWARD")
                 time.sleep(0.5)
         elif order == DoggyOrder.NONE:
