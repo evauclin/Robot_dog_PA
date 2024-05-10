@@ -11,6 +11,7 @@ from typing import List
 from .controller.Action import Action
 from .controller.Led import Led
 from .controller.Buzzer import Buzzer
+from .controller.Control import Control
 
 
 class DoggyOrder(IntEnum):
@@ -147,7 +148,7 @@ class Doggy(object):
         elif order == DoggyOrder.FORWARD:
             start_time = time.time()
             while time.time() - start_time < 5:
-                Action().forward()
+                Control().forward()
         elif order == DoggyOrder.NONE:
             print("NONE")
         else:
