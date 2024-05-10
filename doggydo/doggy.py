@@ -147,7 +147,7 @@ class Doggy(object):
             time.sleep(3)
         elif order == DoggyOrder.FORWARD:
             start_time = time.time()
-            while time.time() - start_time < 5:
+            for _ in range(0, 5):
                 Control().forWard()
                 print("FORWARD")
                 time.sleep(0.5)
