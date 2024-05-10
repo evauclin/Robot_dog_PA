@@ -48,9 +48,10 @@ def main():
             frame = doggy.get_camera_frame(stream)
             if frame is not None:
                 with open("image.jpg", "wb") as f:
+                    print("Saving image")
                     f.write(frame)
                 files = {'image':frame}
-                response = requests.post(url_vm, files=files, headers=headers)
+                response = requests.post(url_vm, files=files, headers=headers, timeout=5)
                 name = response.json()["name"]
                 distance = response.json()["distance"]
                 current_order = 1 if response.json()["message"] == "Go" else -1
