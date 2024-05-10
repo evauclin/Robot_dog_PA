@@ -46,6 +46,7 @@ def main():
         stream = io.BytesIO()
         print(f"Stream started. {stream}")
         for _ in camera.capture_file(stream, 'jpeg'):
+            print(f"Stream : {_}")
             frame = doggy.get_camera_frame(stream)
             print("Frame before : ", frame)
             if frame is not None:
