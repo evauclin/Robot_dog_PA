@@ -41,31 +41,31 @@ def main():
     headers = {"accept": "application/json"}
 
     # Main event loop
-    with doggy.video.camera as camera:
-        while True:
-            doggy.video.setup()
-            stream = io.BytesIO()
-            camera.start()
-            for _ in camera.capture_file(stream, format='jpeg'):
-                frame = doggy.get_camera_frame(stream)
-                if frame is not None:
-                    bgr_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-                    cv2.imwrite("frame.jpg", bgr_frame)
-                    #files = {'image':frame}
-                    files = {"image": open("frame.jpg", "rb")}
-                    response = requests.post(url_vm, files=files, headers=headers, timeout=5)
-                    name = response.json()["name"]
-                    distance = response.json()["distance"]
-                    current_order = 1 if response.json()["message"] == "Go" else -1
-                    print(new_detection)
-                    print(current_order)
+    while True:
+        with doggy.video.camera as camera:
+                doggy.video.setup()
+                stream = io.BytesIO()
+                camera.start()
+                for _ in camera.capture_file(stream, format='jpeg'):
+                    frame = doggy.get_camera_frame(stream)
+                    if frame is not None:
+                        bgr_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+                        cv2.imwrite("frame.jpg", bgr_frame)
+                        #files = {'image':frame}
+                        files = {"image": open("frame.jpg", "rb")}
+                        response = requests.post(url_vm, files=files, headers=headers, timeout=5)
+                        name = response.json()["name"]
+                        distance = response.json()["distance"]
+                        current_order = 1 if response.json()["message"] == "Go" else -1
+                        print(new_detection)
+                        print(current_order)
 
-                    if current_order != -1 and doggy.ready():
-                        last_detections = []
-                        doggy.do(current_order)
-                else:
-                    print("I'll sleep to wait a little.")
-                    time.sleep(1)
+                        if current_order != -1 and doggy.ready():
+                            last_detections = []
+                            doggy.do(current_order)
+                    else:
+                        print("I'll sleep to wait a little.")
+                        time.sleep(1)
 
 
 if __name__ == "__main__":
