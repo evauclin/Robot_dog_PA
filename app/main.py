@@ -74,7 +74,7 @@ async def upload_image(image: UploadFile = File(...)):
                     )
                     if name and name != "Unknown":
                         distance = distance_finder(focal_person, PERSON_WIDTH, data[0][1])
-                        if distance < 400:
+                        if distance > 400:
                             log.info(f"Person detected at {distance} cm with name {name}")
                             return {
                                 "name": name,
