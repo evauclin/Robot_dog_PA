@@ -149,6 +149,8 @@ class Doggy(object):
             start_time = time.time()
             while time.time() - start_time < 5:
                 Control().forWard()
+                print("FORWARD")
+                time.sleep(0.5)
         elif order == DoggyOrder.NONE:
             print("NONE")
         else:
