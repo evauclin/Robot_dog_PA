@@ -146,7 +146,6 @@ class Doggy(object):
             print("NO DOGGY ON PC")
             time.sleep(3)
         elif order == DoggyOrder.FORWARD:
-            start_time = time.time()
             for _ in range(0, 5):
                 Control().forWard()
                 print("FORWARD")
