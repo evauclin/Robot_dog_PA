@@ -49,9 +49,8 @@ def main():
             frame = doggy.get_camera_frame(stream)
             if frame is not None:
                 cv2.imwrite("frame.jpg", frame)
-                files = {'image':frame}
-                _, img_encoded = cv2.imencode('.jpg', frame)
-                files = {'image': img_encoded.tobytes()}
+                #files = {'image':frame}
+                files = {"image": open("frame.jpg", "rb")}
                 response = requests.post(url_vm, files=files, headers=headers, timeout=5)
                 name = response.json()["name"]
                 distance = response.json()["distance"]
