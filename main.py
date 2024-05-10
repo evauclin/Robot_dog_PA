@@ -48,11 +48,10 @@ def main():
         for _ in camera.capture_file(stream, format='jpeg'):
             frame = doggy.get_camera_frame(stream)
             if frame is not None:
-                cv2.imwrite("frame.jpg", frame)
-                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                _, img_encoded = cv2.imencode('.jpg', frame_rgb)
-                # Créer le dictionnaire de fichiers avec l'image en bytes
-                files = {'image': img_encoded.tobytes()}
+                bgr_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+                cv2.imwrite("frame.jpg", bgr_frame)
+                #files = {'image':frame}
+                files = {"image": open("frame.jpg", "rb")}
                 response = requests.post(url_vm, files=files, headers=headers, timeout=5)
                 name = response.json()["name"]
                 distance = response.json()["distance"]
