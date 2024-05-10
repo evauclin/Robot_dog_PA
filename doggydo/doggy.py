@@ -36,8 +36,8 @@ class CV2Camera(object):
 
 class PiCamera(object):
     def __init__(self):
-        import picamera
-        self.camera = picamera.PiCamera()
+        from picamera2 import Picamera2
+        self.camera = Picamera2()
 
     def setup(self):
         self.camera.resolution = (400,300)       # pi camera resolution
