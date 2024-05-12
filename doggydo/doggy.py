@@ -9,7 +9,6 @@ import time
 from typing import List
 
 from .controller.Action import Action
-from .controller.Led import Led
 from .controller.Buzzer import Buzzer
 from .controller.Control import Control
 
@@ -18,9 +17,11 @@ class DoggyOrder(IntEnum):
     NONE = -1
     FORWARD = 1
 
+
 class CV2Camera(object):
     def __init__(self):
         import cv2
+
         self._cap = cv2.VideoCapture(0)
 
     def setup(self):
@@ -38,21 +39,22 @@ class CV2Camera(object):
 class PiCamera(object):
     def __init__(self):
         from picamera2 import Picamera2
+
         self.camera = Picamera2()
 
     def setup(self):
-        self.camera.resolution = (400,300)       # pi camera resolution
-        self.camera.framerate = 15               # 15 frames/sec
-        self.camera.saturation = 80              # Set image video saturation
-        self.camera.brightness = 50              # Set the brightness of the image (50 indicates the state of white balance)
+        self.camera.resolution = (400, 300)  # pi camera resolution
+        self.camera.framerate = 15  # 15 frames/sec
+        self.camera.saturation = 80  # Set image video saturation
+        self.camera.brightness = 50  # Set the brightness of the image (50 indicates the state of white balance)
 
     def is_opened(self):
         return True
 
-    def is_valid_image_4_bytes(self,buf):
+    def is_valid_image_4_bytes(self, buf):
         bValid = True
-        if buf[6:10] in (b'JFIF', b'Exif'):
-            if not buf.rstrip(b'\0\r\n').endswith(b'\xff\xd9'):
+        if buf[6:10] in (b"JFIF", b"Exif"):
+            if not buf.rstrip(b"\0\r\n").endswith(b"\xff\xd9"):
                 bValid = False
         else:
             try:
@@ -73,8 +75,8 @@ class PiCamera(object):
         return False, None
 
 
-DOGGY_IDLE_POSITION = [[55,78,0],[55,78,0],[55,78,0],[55,78,0]]
-DOGGY_SIT_POSITION = [[-20,120,-20],[50,105,0],[50,105,0],[-20,120,20]]
+DOGGY_IDLE_POSITION = [[55, 78, 0], [55, 78, 0], [55, 78, 0], [55, 78, 0]]
+DOGGY_SIT_POSITION = [[-20, 120, -20], [50, 105, 0], [50, 105, 0], [-20, 120, 20]]
 DOGGY_STAND_POSITION = [[0, 99, 10], [0, 99, 10], [0, 99, -10], [0, 99, -10]]
 
 
@@ -89,14 +91,14 @@ class DoggyAnimator(object):
 
     def interpolate_to(self, xyz: List[List[float]], steps: int, pause: float):
         for i in range(4):
-            xyz[i][0]=(xyz[i][0]-self.controller.control.point[i][0])/steps
-            xyz[i][1]=(xyz[i][1]-self.controller.control.point[i][1])/steps
-            xyz[i][2]=(xyz[i][2]-self.controller.control.point[i][2])/steps
+            xyz[i][0] = (xyz[i][0] - self.controller.control.point[i][0]) / steps
+            xyz[i][1] = (xyz[i][1] - self.controller.control.point[i][1]) / steps
+            xyz[i][2] = (xyz[i][2] - self.controller.control.point[i][2]) / steps
         for j in range(steps):
             for i in range(4):
-                self.controller.control.point[i][0]+=xyz[i][0]
-                self.controller.control.point[i][1]+=xyz[i][1]
-                self.controller.control.point[i][2]+=xyz[i][2]
+                self.controller.control.point[i][0] += xyz[i][0]
+                self.controller.control.point[i][1] += xyz[i][1]
+                self.controller.control.point[i][2] += xyz[i][2]
             self.controller.control.run()
             time.sleep(pause)
 
@@ -111,7 +113,7 @@ class Doggy(object):
     @property
     def machine(self):
         if not self._machine:
-            self._machine = subprocess.getoutput('uname -n')
+            self._machine = subprocess.getoutput("uname -n")
         return self._machine
 
     @property
@@ -167,6 +169,6 @@ class Doggy(object):
         ok, frame = self.video.get_frame(stream)
 
         if not ok:
-            raise RuntimeError(f"Could not read frame")
+            raise RuntimeError("Could not read frame")
 
         return frame

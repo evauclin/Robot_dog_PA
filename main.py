@@ -2,7 +2,7 @@
 import io
 import time
 
-from typing import Any, List, Optional
+from typing import List
 from doggydo import doggy
 from doggydo.doggy import DoggyOrder
 import requests
@@ -24,12 +24,9 @@ def get_order_given(last_detections: List[DoggyOrder]) -> DoggyOrder:
     return DoggyOrder.NONE
 
 
-
-
 def main():
     # Init vars and load models here
     last_detections = []
-
 
     if not doggy.start():
         raise RuntimeError("Doggy did not start!")
@@ -46,13 +43,15 @@ def main():
         stream = io.BytesIO()
         camera.start()
         for _ in range(1000):
-            camera.capture_file(stream, format='jpeg')
+            camera.capture_file(stream, format="jpeg")
             frame = doggy.get_camera_frame(stream)
             if frame is not None:
                 bgr_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
                 cv2.imwrite("frame.jpg", bgr_frame)
                 files = {"image": open("frame.jpg", "rb")}
-                response = requests.post(url_vm, files=files, headers=headers, timeout=5)
+                response = requests.post(
+                    url_vm, files=files, headers=headers, timeout=5
+                )
                 name = response.json()["name"]
                 distance = response.json()["distance"]
                 current_order = 1 if response.json()["message"] == "Go" else -1
