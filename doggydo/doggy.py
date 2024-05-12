@@ -75,11 +75,6 @@ class PiCamera(object):
         return False, None
 
 
-DOGGY_IDLE_POSITION = [[55, 78, 0], [55, 78, 0], [55, 78, 0], [55, 78, 0]]
-DOGGY_SIT_POSITION = [[-20, 120, -20], [50, 105, 0], [50, 105, 0], [-20, 120, 20]]
-DOGGY_STAND_POSITION = [[0, 99, 10], [0, 99, 10], [0, 99, -10], [0, 99, -10]]
-
-
 class DoggyAnimator(object):
     def __init__(self):
         self.controller = Action()
@@ -124,7 +119,6 @@ class Doggy(object):
         print("Starting...")
         self.video = CV2Camera() if not self.is_raspberrypi else PiCamera()
         self.animator = DoggyAnimator()
-        # self.led = Led()
         self.buzzer = Buzzer()
         return self.video.is_opened()
 
@@ -134,16 +128,11 @@ class Doggy(object):
         return self._ready
 
     def do(self, order: DoggyOrder) -> bool:
-        # TODO: this must be multithreaded?
         control = Control()
         if not self.ready():
             return False
 
         self._ready = False
-
-        # if order != DoggyOrder.NONE and order != self.last_order and self.in_stand:
-        #     self.animator.controller.lay2(enter=False)
-        #     self.in_stand = False
 
         if not self.is_raspberrypi:
             print("NO DOGGY ON PC")
