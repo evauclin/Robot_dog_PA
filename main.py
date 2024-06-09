@@ -18,7 +18,7 @@ def main():
         print("Doggy started.")
 
     new_detection = DoggyOrder.NONE
-    url_vm = "http://34.240.56.31:80/upload"
+    URL_VM = "http://34.240.56.31:80/upload"
     headers = {"accept": "application/json"}
 
     # Main event loop
@@ -34,7 +34,7 @@ def main():
                 cv2.imwrite("frame.jpg", bgr_frame)
                 files = {"image": open("frame.jpg", "rb")}
                 response = requests.post(
-                    url_vm, files=files, headers=headers, timeout=5
+                    URL_VM, files=files, headers=headers, timeout=5
                 )
                 current_order = 1 if response.json()["message"] == "Go" else -1
 
