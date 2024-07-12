@@ -2,12 +2,12 @@
 import io
 import time
 
-from typing import List
 from doggydo import doggy
 from doggydo.doggy import DoggyOrder
 import requests
 import cv2
 
+CURRENT_URL_VM = "http://34.240.56.31:80/upload"
 
 def main():
     # Init vars and load models here
@@ -18,7 +18,7 @@ def main():
         print("Doggy started.")
 
     new_detection = DoggyOrder.NONE
-    URL_VM = "http://34.240.56.31:80/upload"
+    URL_VM = CURRENT_URL_VM
     headers = {"accept": "application/json"}
 
     # Main event loop
